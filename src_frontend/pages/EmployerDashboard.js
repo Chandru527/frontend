@@ -9,8 +9,8 @@ export default function EmployerDashboard() {
         location: "",
         salary: 0,
         qualifications: "",
-        employerId: "",      // manually enter
-        postedDate: ""       // manually enter
+        employerId: "",
+        postedDate: ""
     });
 
     const fetchJobs = async () => {

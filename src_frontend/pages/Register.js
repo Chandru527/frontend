@@ -8,7 +8,7 @@ const schema = yup.object({
     name: yup.string().required().min(2),
     email: yup.string().required().email(),
     role: yup.string().oneOf(["job_seeker", "employer"]).required(),
-    password: yup.string().required().min(8), // show password rules in UI if you like
+    password: yup.string().required().min(8),
     confirm: yup.string().oneOf([yup.ref("password")], "Passwords must match")
 });
 
@@ -38,7 +38,7 @@ export default function Register() {
                 password: values.password,
                 role: values.role
             });
-            // Redirect to login after successful registration
+
             nav("/login", { replace: true });
         } catch (err) {
             alert(err.response?.data?.message || "Registration failed");

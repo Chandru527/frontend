@@ -26,22 +26,21 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Employer-only */}
-          <Route element={<PrivateRoute roles={['employer']} />}>
+
+          <Route element={<PrivateRoute roles={["employer"]} />}>
             <Route path="/employer/dashboard" element={<EmployerDashboard />} />
             <Route path="/employer/post-job" element={<PostJob />} />
             <Route path="/employer/manage-jobs" element={<ManageJobs />} />
+            <Route path="/employer/profile" element={<Profile />} />
           </Route>
 
-          {/* JobSeeker-only */}
-          <Route element={<PrivateRoute roles={['job_seeker']} />}>
+
+          <Route element={<PrivateRoute roles={["job_seeker"]} />}>
             <Route path="/jobseeker/dashboard" element={<JobSeekerDashboard />} />
             <Route path="/jobseeker/applications" element={<Applications />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/resume" element={<ResumeUpload />} />
           </Route>
-
-
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -49,4 +48,5 @@ function App() {
     </>
   );
 }
+
 export default App;

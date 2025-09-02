@@ -8,7 +8,7 @@ export default function JobSeekerDashboard() {
     const [jobSeekerId, setJobSeekerId] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Fetch all jobs
+
     useEffect(() => {
         (async () => {
             try {
@@ -20,7 +20,7 @@ export default function JobSeekerDashboard() {
         })();
     }, []);
 
-    // Fetch JobSeeker ID
+
     useEffect(() => {
         if (!user) {
             setLoading(false);
@@ -42,7 +42,7 @@ export default function JobSeekerDashboard() {
         })();
     }, [user]);
 
-    // Apply for a job
+
     const applyForJob = async (jobListingId) => {
         if (!jobSeekerId) {
             alert("Please complete your profile first!");

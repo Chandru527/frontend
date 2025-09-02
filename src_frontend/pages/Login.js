@@ -20,9 +20,9 @@ export default function Login() {
 
     const onSubmit = async (values) => {
         try {
-            // Adjust endpoint to your backend
+
             const { data } = await axiosClient.post("/auth/login", values);
-            // Expect backend to return: { token, user: { id, name, roles: [...] } }
+
             login(data.token, data.user);
             const dest = loc.state?.from?.pathname || "/";
             nav(dest, { replace: true });

@@ -26,7 +26,7 @@ export default function AppNavbar() {
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to="/profile">
+                                    <NavLink className="nav-link" to="/employer/profile">
                                         My Profile
                                     </NavLink>
                                 </li>

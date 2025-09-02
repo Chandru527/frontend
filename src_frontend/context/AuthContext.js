@@ -14,10 +14,15 @@ export function AuthProvider({ children }) {
         localStorage.setItem("cc_token", jwt);
         localStorage.setItem("cc_user", JSON.stringify(userPayload));
         setToken(jwt);
-        setUser({
+
+        const userObject = {
+            userId: userPayload.userId || userPayload.id || null,
+            id: userPayload.id || userPayload.userId || null,
             username: userPayload.username || userPayload.name || userPayload.email,
-            roles: userPayload.roles
-        });
+            email: userPayload.email,
+            roles: userPayload.roles || [],
+        };
+        setUser(userObject);
     };
 
     const logout = () => {
@@ -27,12 +32,13 @@ export function AuthProvider({ children }) {
         setUser(null);
     };
 
-    const hasRole = (roles = []) => {
-        if (!roles.length) return true;
-        const r = user?.roles || [];
-        return roles.some(role => r.includes(role));
-    };
+    const hasRole = (roles = []) =>
+        !roles.length ||
+        roles.some((r) => user?.roles?.includes(r));
 
-    const value = useMemo(() => ({ token, user, login, logout, hasRole }), [token, user]);
+    const value = useMemo(() => ({ token, user, login, logout, hasRole }), [
+        token,
+        user,
+    ]);
     return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }

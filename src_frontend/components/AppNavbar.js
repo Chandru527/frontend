@@ -26,6 +26,11 @@ export default function AppNavbar() {
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
+                                    <NavLink className="nav-link" to="/employer/applications">
+                                        Applications
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
                                     <NavLink className="nav-link" to="/employer/profile">
                                         My Profile
                                     </NavLink>
@@ -44,6 +49,9 @@ export default function AppNavbar() {
                                     <NavLink className="nav-link" to="/profile">
                                         My Profile
                                     </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to="/resume">My Resume</NavLink>
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/jobseeker/applications">

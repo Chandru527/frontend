@@ -23,7 +23,7 @@ export default function EmployerDashboard() {
     const createJob = async () => {
         try {
             await axiosClient.post("/job-listings/create", newJob);
-            alert("✅ Job created successfully");
+            alert("Job created successfully");
             setNewJob({
                 title: "",
                 description: "",
@@ -35,7 +35,7 @@ export default function EmployerDashboard() {
             });
             fetchJobs();
         } catch (err) {
-            console.error("❌ Post failed:", err.response?.data || err.message);
+            console.error(" Post failed:", err.response?.data || err.message);
             alert("Post failed: " + JSON.stringify(err.response?.data));
         }
     };

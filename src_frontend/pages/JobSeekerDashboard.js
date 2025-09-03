@@ -50,20 +50,35 @@ export default function JobSeekerDashboard() {
         }
 
         try {
+            // 1. Fetch current resume for the job seeker
+            const { data: resumeData } = await axiosClient.get(`/resumes/by-user/${jobSeekerId}`);
+            const filePath = resumeData?.filePath;
+
+            if (!filePath) {
+                alert("Please upload your resume before applying.");
+                return;
+            }
+
+            // 2. Create application with resume file path included
             const payload = {
                 jobSeekerId,
                 jobListingId,
                 status: "pending",
-                applicationDate: new Date().toISOString().split("T")[0],
+                applicationDate: new Date().toISOString().slice(0, 10),
+                filePath, // attach resume file path here
             };
 
             await axiosClient.post("/applications/apply", payload);
             alert("Application submitted successfully!");
-        } catch (err) {
-            console.error("Apply failed:", err.response?.data || err.message);
-            alert(err.response?.data?.message || "Application failed");
+        } catch (error) {
+            if (error.response?.status === 404) {
+                alert("Please upload your resume before applying.");
+            } else {
+                alert(error.response?.data?.message || "Failed to submit application.");
+            }
         }
     };
+
 
     if (!user) return <div>Loading user info...</div>;
     if (loading) return <div>Loading dashboard...</div>;

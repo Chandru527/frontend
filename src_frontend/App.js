@@ -10,6 +10,7 @@ import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import PostJob from "./pages/PostJob";
 import ManageJobs from "./pages/ManageJobs";
 import Applications from "./pages/Applications";
+import EmployerApplications from "./pages/EmployerApplications";
 import Profile from "./pages/Profile";
 import ResumeUpload from "./pages/ResumeUpload";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -31,6 +32,7 @@ function App() {
             <Route path="/employer/dashboard" element={<EmployerDashboard />} />
             <Route path="/employer/post-job" element={<PostJob />} />
             <Route path="/employer/manage-jobs" element={<ManageJobs />} />
+            <Route path="/employer/applications" element={<EmployerApplications />} />
             <Route path="/employer/profile" element={<Profile />} />
           </Route>
 

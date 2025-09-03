@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
 import { useAuth } from "../context/AuthContext";
+import * as mammoth from "mammoth";
 
 export default function Applications() {
     const [applications, setApplications] = useState([]);
@@ -9,23 +10,51 @@ export default function Applications() {
     const [jobSeekerId, setJobSeekerId] = useState(null);
     const [error, setError] = useState(null);
 
-    // Added: Function to securely view resume via authorized API call
     const viewResume = async (filePath) => {
         if (!filePath) {
             alert("No resume available");
             return;
         }
+        if (
+            filePath.toLowerCase().endsWith(".doc") ||
+            filePath.toLowerCase().endsWith(".docx")
+        ) {
+            try {
+                const response = await axiosClient.get(`/resumes/download`, {
+                    params: { path: filePath },
+                    responseType: "arraybuffer",
+                    headers: {
+                        Accept:
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword",
+                    },
+                });
+                const { value: html } = await mammoth.convertToHtml({
+                    arrayBuffer: response.data,
+                });
+                const preview = window.open("", "_blank");
+                preview.document.write(html);
+                preview.document.close();
+            } catch (err) {
+                console.error("DOCX preview error:", err);
+                alert("Failed to load DOCX preview.");
+            }
+            return;
+        }
         try {
             const response = await axiosClient.get(`/resumes/download`, {
                 params: { path: filePath },
-                responseType: "blob",
+                responseType: "arraybuffer",
+                headers: { Accept: "application/pdf" },
             });
-            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const contentType =
+                response.headers["content-type"] || "application/octet-stream";
+            const blob = new Blob([response.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
             window.open(url, "_blank");
-            // Do NOT revoke URL immediately; allow browser to load the content
-        } catch (error) {
-            alert("Failed to load resume.");
-            console.error("View resume error:", error);
+            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+        } catch (err) {
+            console.error("View resume error:", err);
+            alert("Failed to load resume. Please try again.");
         }
     };
 
@@ -41,11 +70,10 @@ export default function Applications() {
             .then(({ data }) => {
                 const seekerId = data.jobSeekerId || data.id;
                 setJobSeekerId(seekerId);
-                if (!seekerId) setError("Job seeker profile not found. Please complete your profile.");
+                if (!seekerId)
+                    setError("Job seeker profile not found. Please complete your profile.");
             })
-            .catch(() => {
-                setError("Unable to fetch job seeker profile.");
-            })
+            .catch(() => setError("Unable to fetch job seeker profile."))
             .finally(() => setLoading(false));
     }, [user]);
 
@@ -58,8 +86,10 @@ export default function Applications() {
                 setApplications(
                     arr.map((app) => ({
                         applicationId: app.applicationId || app.id,
-                        jobListingId: app.jobListingId || (app.jobListing && app.jobListing.id),
-                        jobTitle: (app.jobListing && app.jobListing.title) || app.jobTitle || "N/A",
+                        jobListingId:
+                            app.jobListingId || (app.jobListing && app.jobListing.id),
+                        jobTitle:
+                            (app.jobListing && app.jobListing.title) || app.jobTitle || "N/A",
                         applicationDate: app.applicationDate,
                         status: app.status || "Applied",
                         filePath: app.filePath || "",
@@ -80,7 +110,10 @@ export default function Applications() {
                 <h2>My Applications</h2>
                 <div className="alert alert-danger">
                     <p>{error}</p>
-                    <button className="btn btn-primary" onClick={() => (window.location.href = "/profile")}>
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => (window.location.href = "/profile")}
+                    >
                         Complete Profile
                     </button>
                 </div>
@@ -91,7 +124,8 @@ export default function Applications() {
         <div className="container mt-4">
             <h2>My Applications</h2>
             <div style={{ fontSize: 12, marginBottom: 10 }}>
-                <strong>Debug Info:</strong><br />
+                <strong>Debug Info:</strong>
+                <br />
                 User ID: {user?.userId || user?.id}
                 <br />
                 JobSeeker ID: {jobSeekerId}
@@ -103,7 +137,8 @@ export default function Applications() {
                     <h4>No Applications Found</h4>
                     <p>You haven't applied to any jobs yet.</p>
                     <p>
-                        Visit the <a href="/job-seeker-dashboard">Job Dashboard</a> to browse and apply for jobs.
+                        Visit the <a href="/job-seeker-dashboard">Job Dashboard</a> to browse
+                        and apply for jobs.
                     </p>
                 </div>
             ) : (
@@ -120,16 +155,20 @@ export default function Applications() {
                                         <span
                                             className={`badge ms-2 ${app.status.toLowerCase() === "pending"
                                                     ? "bg-warning"
-                                                    : app.status.toLowerCase() === "accepted" || app.status.toLowerCase() === "approved"
+                                                    : app.status.toLowerCase() === "accepted" ||
+                                                        app.status.toLowerCase() === "approved"
                                                         ? "bg-success"
                                                         : "bg-danger"
                                                 }`}
                                         >
-                                            {app.status.toLowerCase() === "pending" ? "Applied" : app.status}
+                                            {app.status.toLowerCase() === "pending"
+                                                ? "Applied"
+                                                : app.status}
                                         </span>
                                     </p>
                                     <small className="text-muted">
-                                        Application ID: {app.applicationId} | Job ID: {app.jobListingId}
+                                        Application ID: {app.applicationId} | Job ID:{" "}
+                                        {app.jobListingId}
                                     </small>
                                     {app.filePath ? (
                                         <div style={{ marginTop: 8 }}>
@@ -140,12 +179,16 @@ export default function Applications() {
                                             >
                                                 View Resume
                                             </button>
-                                            <span style={{ marginLeft: 10, fontSize: "0.8em", color: "#666" }}>
+                                            <span
+                                                style={{ marginLeft: 10, fontSize: "0.8em", color: "#666" }}
+                                            >
                                                 {app.filePath.split(/[\\/]/).pop()}
                                             </span>
                                         </div>
                                     ) : (
-                                        <div style={{ color: "#aaa", marginTop: 8 }}>No Resume Attached</div>
+                                        <div style={{ color: "#aaa", marginTop: 8 }}>
+                                            No Resume Attached
+                                        </div>
                                     )}
                                 </div>
                             </div>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
 import { useAuth } from "../context/AuthContext";
+import * as mammoth from "mammoth";
+
 
 export default function EmployerApplications() {
     const { user } = useAuth();
@@ -10,25 +12,57 @@ export default function EmployerApplications() {
 
     const uid = user?.userId || user?.id;
 
-    // Added: Function to securely view resume by fetching with auth headers
     const viewResume = async (filePath) => {
         if (!filePath) {
             alert("No resume available");
             return;
         }
+
+        // If DOCX, convert to HTML and open in new window
+        if (filePath.toLowerCase().endsWith(".docx") || filePath.toLowerCase().endsWith(".doc")) {
+            try {
+                const response = await axiosClient.get(`/resumes/download`, {
+                    params: { path: filePath },
+                    responseType: "arraybuffer",
+                    headers: {
+                        Accept:
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword",
+                    },
+                });
+                const { value: html } = await mammoth.convertToHtml({ arrayBuffer: response.data });
+                const preview = window.open("", "_blank");
+                preview.document.write(html);
+                preview.document.close();
+            } catch (err) {
+                console.error("DOCX preview error:", err);
+                alert("Failed to load DOCX preview.");
+            }
+            return;
+        }
+
+        // Fallback for PDF and other types (unchanged)
         try {
             const response = await axiosClient.get(`/resumes/download`, {
                 params: { path: filePath },
-                responseType: "blob",
+                responseType: "arraybuffer",
+                headers: {
+                    Accept:
+                        "application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword",
+                },
             });
-            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const contentType = response.headers["content-type"] || "application/octet-stream";
+            const blob = new Blob([response.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
             window.open(url, "_blank");
-            // Do not revoke immediately, browser needs time to load
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+            }, 1000);
         } catch (error) {
-            alert("Failed to load resume.");
             console.error("View resume error:", error);
+            alert("Failed to load resume. Please try again.");
         }
     };
+
 
     useEffect(() => {
         if (!uid) {
@@ -40,7 +74,6 @@ export default function EmployerApplications() {
             .then(({ data }) => {
                 const empId = data.employerId || data.id;
                 setEmployerId(empId);
-
                 return axiosClient.get(`/applications/employer/${empId}`);
             })
             .then(({ data }) => {
@@ -114,13 +147,17 @@ export default function EmployerApplications() {
                                                 <div className="btn-group" role="group">
                                                     <button
                                                         className="btn btn-success btn-sm"
-                                                        onClick={() => updateApplicationStatus(application.applicationId, "APPROVED")}
+                                                        onClick={() =>
+                                                            updateApplicationStatus(application.applicationId, "APPROVED")
+                                                        }
                                                     >
                                                         Approve
                                                     </button>
                                                     <button
                                                         className="btn btn-danger btn-sm"
-                                                        onClick={() => updateApplicationStatus(application.applicationId, "REJECTED")}
+                                                        onClick={() =>
+                                                            updateApplicationStatus(application.applicationId, "REJECTED")
+                                                        }
                                                     >
                                                         Reject
                                                     </button>

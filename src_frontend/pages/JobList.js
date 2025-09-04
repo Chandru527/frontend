@@ -18,9 +18,10 @@ export default function JobList() {
     }, []);
 
     const filtered = q
-        ? jobs.filter(j =>
-            j.title.toLowerCase().includes(q.toLowerCase()) ||
-            j.location?.toLowerCase().includes(q.toLowerCase())
+        ? jobs.filter(
+            (j) =>
+                j.title.toLowerCase().includes(q.toLowerCase()) ||
+                j.location?.toLowerCase().includes(q.toLowerCase())
         )
         : jobs;
 
@@ -41,6 +42,12 @@ export default function JobList() {
                             <div className="card-body">
                                 <h5>{j.title}</h5>
                                 <p className="mb-1">{j.location}</p>
+                                <p className="mb-1">
+                                    <strong>Company:</strong> {j.companyName || "N/A"}
+                                </p>
+                                <p className="mb-1">
+                                    <strong>Job Type:</strong> {j.jobType || "N/A"}
+                                </p>
                                 <p className="text-truncate">{j.description}</p>
                                 <Link to={`/jobs/${j.jobListingId}`} className="btn btn-sm btn-primary">
                                     View

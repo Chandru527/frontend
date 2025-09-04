@@ -52,26 +52,42 @@ export default function JobDetail() {
                     <input
                         type="text"
                         value={job.title}
-                        onChange={e => setJob({ ...job, title: e.target.value })}
+                        onChange={(e) => setJob({ ...job, title: e.target.value })}
                         placeholder="Title"
                     />
                     <input
                         type="text"
                         value={job.location}
-                        onChange={e => setJob({ ...job, location: e.target.value })}
+                        onChange={(e) => setJob({ ...job, location: e.target.value })}
                         placeholder="Location"
                     />
                     <input
                         type="number"
                         value={job.salary}
-                        onChange={e => setJob({ ...job, salary: e.target.value })}
+                        onChange={(e) => setJob({ ...job, salary: e.target.value })}
                         placeholder="Salary"
                     />
                     <textarea
                         value={job.description}
-                        onChange={e => setJob({ ...job, description: e.target.value })}
+                        onChange={(e) => setJob({ ...job, description: e.target.value })}
                         placeholder="Description"
                     />
+                    <input
+                        type="text"
+                        value={job.companyName || ""}
+                        onChange={(e) => setJob({ ...job, companyName: e.target.value })}
+                        placeholder="Company Name"
+                    />
+                    <select
+                        value={job.jobType || ""}
+                        onChange={(e) => setJob({ ...job, jobType: e.target.value })}
+                        required
+                        className="form-select mt-2 mb-3"
+                    >
+                        <option value="">Select Job Type</option>
+                        <option value="Full-Time">Full-Time</option>
+                        <option value="Intern">Intern</option>
+                    </select>
                     <br />
                     <button onClick={updateJob}>Save</button>
                     <button onClick={() => setEditMode(false)}>Cancel</button>
@@ -79,9 +95,21 @@ export default function JobDetail() {
             ) : (
                 <>
                     <h4>{job.title}</h4>
-                    <p><b>Location:</b> {job.location}</p>
-                    <p><b>Salary:</b> {job.salary}</p>
-                    <p><b>Description:</b> {job.description}</p>
+                    <p>
+                        <b>Location:</b> {job.location}
+                    </p>
+                    <p>
+                        <b>Salary:</b> {job.salary}
+                    </p>
+                    <p>
+                        <b>Description:</b> {job.description}
+                    </p>
+                    <p>
+                        <b>Company:</b> {job.companyName || "N/A"}
+                    </p>
+                    <p>
+                        <b>Job Type:</b> {job.jobType || "N/A"}
+                    </p>
                 </>
             )}
 

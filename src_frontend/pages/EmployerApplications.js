@@ -17,8 +17,6 @@ export default function EmployerApplications() {
             alert("No resume available");
             return;
         }
-
-        // If DOCX, convert to HTML and open in new window
         if (filePath.toLowerCase().endsWith(".docx") || filePath.toLowerCase().endsWith(".doc")) {
             try {
                 const response = await axiosClient.get(`/resumes/download`, {
@@ -39,8 +37,6 @@ export default function EmployerApplications() {
             }
             return;
         }
-
-        // Fallback for PDF and other types (unchanged)
         try {
             const response = await axiosClient.get(`/resumes/download`, {
                 params: { path: filePath },

@@ -50,7 +50,6 @@ export default function JobSeekerDashboard() {
         }
 
         try {
-            // 1. Fetch current resume for the job seeker
             const { data: resumeData } = await axiosClient.get(`/resumes/by-user/${jobSeekerId}`);
             const filePath = resumeData?.filePath;
 
@@ -58,14 +57,12 @@ export default function JobSeekerDashboard() {
                 alert("Please upload your resume before applying.");
                 return;
             }
-
-            // 2. Create application with resume file path included
             const payload = {
                 jobSeekerId,
                 jobListingId,
                 status: "pending",
                 applicationDate: new Date().toISOString().slice(0, 10),
-                filePath, // attach resume file path here
+                filePath,
             };
 
             await axiosClient.post("/applications/apply", payload);

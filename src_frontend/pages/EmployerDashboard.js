@@ -15,16 +15,16 @@ export default function EmployerDashboard() {
         qualifications: "",
         postedDate: "",
         jobType: "",
-        companyName: "", // This will be editable, not readonly
+        companyName: "",
+        experience: "",
+        requiredSkills: "", // <-- Added here
     });
 
     // Fetch employer info and set employerId
     useEffect(() => {
         if (!user?.userId && !user?.id) return;
-
         const uid = user?.userId || user?.id;
         setEmployerLoading(true);
-
         axiosClient
             .get(`/employers/by-user/${uid}`)
             .then(({ data }) => {
@@ -44,9 +44,7 @@ export default function EmployerDashboard() {
     // Fetch ONLY this employer's job listings, not all jobs
     const fetchMyJobs = async () => {
         if (!employerId) return;
-
         try {
-            // Fetch jobs by specific employer ID, not all jobs
             const { data } = await axiosClient.get(`/job-listings/employer/${employerId}`);
             setJobs(Array.isArray(data) ? data : []);
         } catch (err) {
@@ -67,14 +65,17 @@ export default function EmployerDashboard() {
             alert("Loading employer info, please wait...");
             return;
         }
-
         if (!employerId) {
             alert("Unable to determine employer ID. Please refresh and try again.");
             return;
         }
-
         try {
-            // Include employerId in the payload
+            // Add validation if desired:
+            // if (!newJob.requiredSkills.trim()) {
+            //     alert("Required Skills are mandatory!");
+            //     return;
+            // }
+
             const jobPayload = {
                 ...newJob,
                 employerId: employerId,
@@ -83,7 +84,6 @@ export default function EmployerDashboard() {
             await axiosClient.post("/job-listings/create", jobPayload);
             alert("Job created successfully");
 
-            // Reset form but keep companyName for next job posting
             setNewJob((prev) => ({
                 title: "",
                 description: "",
@@ -92,10 +92,12 @@ export default function EmployerDashboard() {
                 qualifications: "",
                 postedDate: "",
                 jobType: "",
-                companyName: prev.companyName, // Keep company name
+                companyName: prev.companyName,
+                experience: "",
+                requiredSkills: "", // <-- Reset field after creation
             }));
 
-            fetchMyJobs(); // Refresh only my jobs
+            fetchMyJobs();
         } catch (err) {
             console.error("Post failed:", err.response?.data || err.message);
             alert("Post failed: " + (err.response?.data?.message || err.message));
@@ -124,7 +126,6 @@ export default function EmployerDashboard() {
                             required
                         />
                     </div>
-
                     <div className="mb-3">
                         <textarea
                             placeholder="Job Description"
@@ -135,7 +136,6 @@ export default function EmployerDashboard() {
                             required
                         />
                     </div>
-
                     <div className="mb-3">
                         <input
                             placeholder="Qualifications"
@@ -145,7 +145,15 @@ export default function EmployerDashboard() {
                             required
                         />
                     </div>
-
+                    <div className="mb-3">
+                        <input
+                            placeholder="Required Skills (comma separated)"
+                            value={newJob.requiredSkills}
+                            onChange={(e) => setNewJob({ ...newJob, requiredSkills: e.target.value })}
+                            className="form-control"
+                            required
+                        />
+                    </div>
                     <div className="mb-3">
                         <input
                             placeholder="Location"
@@ -155,7 +163,6 @@ export default function EmployerDashboard() {
                             required
                         />
                     </div>
-
                     <div className="mb-3">
                         <input
                             type="number"
@@ -166,7 +173,6 @@ export default function EmployerDashboard() {
                             required
                         />
                     </div>
-
                     <div className="mb-3">
                         <input
                             placeholder="Company Name"
@@ -176,7 +182,15 @@ export default function EmployerDashboard() {
                             required
                         />
                     </div>
-
+                    <div className="mb-3">
+                        <input
+                            placeholder="Experience"
+                            value={newJob.experience}
+                            onChange={e => setNewJob({ ...newJob, experience: e.target.value })}
+                            className="form-control"
+                            required
+                        />
+                    </div>
                     <div className="mb-3">
                         <select
                             value={newJob.jobType}
@@ -187,11 +201,10 @@ export default function EmployerDashboard() {
                             <option value="">Select Job Type</option>
                             <option value="Full-Time">Full-Time</option>
                             <option value="Intern">Intern</option>
-                            <option value="Part-Time">Part-Time</option>
-                            <option value="Contract">Contract</option>
+                            {/* <option value="Part-Time">Part-Time</option> */}
+                            {/* <option value="Contract">Contract</option> */}
                         </select>
                     </div>
-
                     <div className="mb-3">
                         <input
                             type="date"
@@ -201,7 +214,6 @@ export default function EmployerDashboard() {
                             className="form-control"
                         />
                     </div>
-
                     <button
                         onClick={createJob}
                         className="btn btn-primary"
@@ -211,7 +223,6 @@ export default function EmployerDashboard() {
                     </button>
                 </div>
             </div>
-
             <div className="card">
                 <div className="card-header">
                     <h5>My Job Listings ({jobs.length})</h5>
@@ -227,6 +238,7 @@ export default function EmployerDashboard() {
                                 <p className="mb-1"><strong>Salary:</strong> ${j.salary}</p>
                                 <p className="mb-1"><strong>Company:</strong> {j.companyName || "N/A"}</p>
                                 <p className="mb-1"><strong>Job Type:</strong> {j.jobType || "N/A"}</p>
+                                <p className="mb-1"><strong>Required Skills:</strong> {j.requiredSkills || "N/A"}</p>
                                 <p className="mb-1"><strong>Posted:</strong> {j.postedDate || "N/A"}</p>
                                 <small className="text-muted">{j.description}</small>
                             </div>

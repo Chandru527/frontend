@@ -18,11 +18,17 @@ export default function AppNavbar() {
                             </NavLink>
                         </li>
 
+
                         {user?.roles?.includes("employer") && (
                             <>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/employer/dashboard">
                                         Employer Dashboard
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to="/employer/manage-jobs">
+                                        Manage Jobs
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
@@ -56,6 +62,11 @@ export default function AppNavbar() {
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/jobseeker/applications">
                                         My Applications
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to="/recommendations">
+                                        Recommendations
                                     </NavLink>
                                 </li>
                             </>

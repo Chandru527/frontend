@@ -72,7 +72,6 @@ export default function JobSeekerProfile() {
                 });
             })
             .catch(() => {
-                // ignore errors quietly
             })
             .finally(() => setLoading(false));
     }, [uid, reset]);

@@ -14,13 +14,12 @@ export default function ResumeUpload() {
     useEffect(() => {
         if (!uid) return setLoading(false);
 
-        // Fetch user's job seeker ID and resume
         axiosClient
             .get(`/job-seekers/by-user/${uid}`)
             .then(({ data }) => {
                 setJobSeekerId(data.jobSeekerId || data.id);
 
-                // Fetch the resume for this job seeker
+
                 return axiosClient.get(`/resumes/by-user/${data.jobSeekerId || data.id}`);
             })
             .then(({ data }) => setResume(data))
@@ -52,7 +51,7 @@ export default function ResumeUpload() {
             .then(({ data }) => {
                 setResume(data);
                 alert("Resume uploaded successfully");
-                setSelectedFile(null); // Clear selected file after upload
+                setSelectedFile(null);
             })
             .catch((err) => {
                 alert(err.response?.data || "Upload failed");
@@ -72,14 +71,14 @@ export default function ResumeUpload() {
             const link = document.createElement("a");
             link.href = url;
 
-            // Extract the file name from path
+
             const fileName = resume.filePath.split(/[\\/]/).pop();
             link.setAttribute("download", fileName);
 
             document.body.appendChild(link);
             link.click();
 
-            // Clean-up
+
             link.remove();
             window.URL.revokeObjectURL(url);
         } catch (error) {

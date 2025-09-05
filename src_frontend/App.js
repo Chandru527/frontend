@@ -12,6 +12,7 @@ import ManageJobs from "./pages/ManageJobs";
 import Applications from "./pages/Applications";
 import EmployerApplications from "./pages/EmployerApplications";
 import Profile from "./pages/Profile";
+import Recommendations from "./pages/Recommendations";
 import ResumeUpload from "./pages/ResumeUpload";
 import PrivateRoute from "./routes/PrivateRoute";
 
@@ -40,6 +41,7 @@ function App() {
           <Route element={<PrivateRoute roles={["job_seeker"]} />}>
             <Route path="/jobseeker/dashboard" element={<JobSeekerDashboard />} />
             <Route path="/jobseeker/applications" element={<Applications />} />
+            <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/resume" element={<ResumeUpload />} />
           </Route>

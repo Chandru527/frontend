@@ -103,43 +103,47 @@ export default function ResumeUpload() {
 
     return (
         <div className="container" style={{ maxWidth: "600px" }}>
-            <h2>My Resume</h2>
+            <div className="card">
+                <div className="card-header">
+                    <h2>My Resume</h2>
+                </div>
 
-            {resume ? (
-                <div className="card mb-3">
-                    <div className="card-body">
-                        <p>
-                            <strong>Uploaded On:</strong> {resume.uploadDate}
-                        </p>
-                        <button className="btn btn-outline-primary me-2" onClick={downloadResume}>
-                            Download
-                        </button>
-                        <button className="btn btn-outline-danger" onClick={deleteResume}>
-                            Delete
-                        </button>
+                {resume ? (
+                    <div className="card mb-3">
+                        <div className="card-body">
+                            <p>
+                                <strong>Uploaded On:</strong> {resume.uploadDate}
+                            </p>
+                            <button className="btn btn-outline-primary me-2" onClick={downloadResume}>
+                                Download
+                            </button>
+                            <button className="btn btn-outline-danger" onClick={deleteResume}>
+                                Delete
+                            </button>
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <div className="alert alert-info">No resume uploaded yet</div>
-            )}
+                ) : (
+                    <div className="alert alert-info">No resume uploaded yet</div>
+                )}
 
-            <form onSubmit={uploadResume}>
-                <div className="mb-3">
-                    <label htmlFor="resumeFile" className="form-label">
-                        Upload New Resume
-                    </label>
-                    <input
-                        id="resumeFile"
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        className="form-control"
-                        onChange={handleFileChange}
-                    />
-                </div>
-                <button className="btn btn-success" disabled={!selectedFile}>
-                    {resume ? "Replace Resume" : "Upload Resume"}
-                </button>
-            </form>
+                <form onSubmit={uploadResume}>
+                    <div className="mb-3">
+                        <label htmlFor="resumeFile" className="form-label">
+                            Upload New Resume
+                        </label>
+                        <input
+                            id="resumeFile"
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            className="form-control"
+                            onChange={handleFileChange}
+                        />
+                    </div>
+                    <button className="btn btn-success" disabled={!selectedFile}>
+                        {resume ? "Replace Resume" : "Upload Resume"}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }

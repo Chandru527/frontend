@@ -110,140 +110,144 @@ export default function EmployerDashboard() {
 
     return (
         <div className="container mt-4">
-            <h3>Employer Dashboard</h3>
-
-            <div className="card mb-4">
-                <div className="card-header">
-                    <h5>Create Job Listing</h5>
-                </div>
-                <div className="card-body">
-                    <div className="mb-3">
-                        <input
-                            placeholder="Job Title"
-                            value={newJob.title}
-                            onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
-                            className="form-control"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <textarea
-                            placeholder="Job Description"
-                            value={newJob.description}
-                            onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
-                            className="form-control"
-                            rows="3"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            placeholder="Qualifications"
-                            value={newJob.qualifications}
-                            onChange={(e) => setNewJob({ ...newJob, qualifications: e.target.value })}
-                            className="form-control"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            placeholder="Required Skills (comma separated)"
-                            value={newJob.requiredSkills}
-                            onChange={(e) => setNewJob({ ...newJob, requiredSkills: e.target.value })}
-                            className="form-control"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            placeholder="Location"
-                            value={newJob.location}
-                            onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
-                            className="form-control"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            type="number"
-                            placeholder="Salary"
-                            value={newJob.salary}
-                            onChange={(e) => setNewJob({ ...newJob, salary: e.target.value })}
-                            className="form-control"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            placeholder="Company Name"
-                            value={newJob.companyName}
-                            onChange={(e) => setNewJob({ ...newJob, companyName: e.target.value })}
-                            className="form-control"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            placeholder="Experience"
-                            value={newJob.experience}
-                            onChange={e => setNewJob({ ...newJob, experience: e.target.value })}
-                            className="form-control"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <select
-                            value={newJob.jobType}
-                            onChange={(e) => setNewJob({ ...newJob, jobType: e.target.value })}
-                            className="form-select"
-                            required
-                        >
-                            <option value="">Select Job Type</option>
-                            <option value="Full-Time">Full-Time</option>
-                            <option value="Intern">Intern</option>
-                            {/* <option value="Part-Time">Part-Time</option> */}
-                            {/* <option value="Contract">Contract</option> */}
-                        </select>
-                    </div>
-                    <div className="mb-3">
-                        <input
-                            type="date"
-                            placeholder="Posted Date"
-                            value={newJob.postedDate}
-                            onChange={(e) => setNewJob({ ...newJob, postedDate: e.target.value })}
-                            className="form-control"
-                        />
-                    </div>
-                    <button
-                        onClick={createJob}
-                        className="btn btn-primary"
-                        disabled={employerLoading || !employerId}
-                    >
-                        Post Job
-                    </button>
-                </div>
-            </div>
             <div className="card">
-                <div className="card-header">
-                    <h5>My Job Listings ({jobs.length})</h5>
-                </div>
                 <div className="card-body">
-                    {jobs.length === 0 ? (
-                        <p className="text-muted">You haven't posted any jobs yet.</p>
-                    ) : (
-                        jobs.map((j) => (
-                            <div key={j.jobListingId} className="border-bottom pb-3 mb-3">
-                                <h6><strong>{j.title}</strong></h6>
-                                <p className="mb-1"><strong>Location:</strong> {j.location}</p>
-                                <p className="mb-1"><strong>Salary:</strong> ${j.salary}</p>
-                                <p className="mb-1"><strong>Company:</strong> {j.companyName || "N/A"}</p>
-                                <p className="mb-1"><strong>Job Type:</strong> {j.jobType || "N/A"}</p>
-                                <p className="mb-1"><strong>Required Skills:</strong> {j.requiredSkills || "N/A"}</p>
-                                <p className="mb-1"><strong>Posted:</strong> {j.postedDate || "N/A"}</p>
-                                <small className="text-muted">{j.description}</small>
-                            </div>
-                        ))
-                    )}
+                    <h3>Employer Dashboard</h3>
+                </div>
+
+                <div className="card mb-4">
+                    <div className="card-header">
+                        <h5>Create Job Listing</h5>
+                    </div>
+                    <div className="card-body">
+                        <div className="mb-3">
+                            <input
+                                placeholder="Job Title"
+                                value={newJob.title}
+                                onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <textarea
+                                placeholder="Job Description"
+                                value={newJob.description}
+                                onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
+                                className="form-control"
+                                rows="3"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                placeholder="Qualifications"
+                                value={newJob.qualifications}
+                                onChange={(e) => setNewJob({ ...newJob, qualifications: e.target.value })}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                placeholder="Required Skills (comma separated)"
+                                value={newJob.requiredSkills}
+                                onChange={(e) => setNewJob({ ...newJob, requiredSkills: e.target.value })}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                placeholder="Location"
+                                value={newJob.location}
+                                onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                type="number"
+                                placeholder="Salary"
+                                value={newJob.salary}
+                                onChange={(e) => setNewJob({ ...newJob, salary: e.target.value })}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                placeholder="Company Name"
+                                value={newJob.companyName}
+                                onChange={(e) => setNewJob({ ...newJob, companyName: e.target.value })}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                placeholder="Experience"
+                                value={newJob.experience}
+                                onChange={e => setNewJob({ ...newJob, experience: e.target.value })}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <select
+                                value={newJob.jobType}
+                                onChange={(e) => setNewJob({ ...newJob, jobType: e.target.value })}
+                                className="form-select"
+                                required
+                            >
+                                <option value="">Select Job Type</option>
+                                <option value="Full-Time">Full-Time</option>
+                                <option value="Intern">Intern</option>
+                                {/* <option value="Part-Time">Part-Time</option> */}
+                                {/* <option value="Contract">Contract</option> */}
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                type="date"
+                                placeholder="Posted Date"
+                                value={newJob.postedDate}
+                                onChange={(e) => setNewJob({ ...newJob, postedDate: e.target.value })}
+                                className="form-control"
+                            />
+                        </div>
+                        <button
+                            onClick={createJob}
+                            className="btn btn-primary"
+                            disabled={employerLoading || !employerId}
+                        >
+                            Post Job
+                        </button>
+                    </div>
+                </div>
+                <div className="card">
+                    <div className="card-header">
+                        <h5>My Job Listings ({jobs.length})</h5>
+                    </div>
+                    <div className="card-body">
+                        {jobs.length === 0 ? (
+                            <p className="text-muted">You haven't posted any jobs yet.</p>
+                        ) : (
+                            jobs.map((j) => (
+                                <div key={j.jobListingId} className="border-bottom pb-3 mb-3">
+                                    <h6><strong>{j.title}</strong></h6>
+                                    <p className="mb-1"><strong>Location:</strong> {j.location}</p>
+                                    <p className="mb-1"><strong>Salary:</strong> ${j.salary}</p>
+                                    <p className="mb-1"><strong>Company:</strong> {j.companyName || "N/A"}</p>
+                                    <p className="mb-1"><strong>Job Type:</strong> {j.jobType || "N/A"}</p>
+                                    <p className="mb-1"><strong>Required Skills:</strong> {j.requiredSkills || "N/A"}</p>
+                                    <p className="mb-1"><strong>Posted:</strong> {j.postedDate || "N/A"}</p>
+                                    <small className="text-muted">{j.description}</small>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,44 +1,45 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FaBriefcase, FaUserTie, FaClipboardList, FaUser, FaFileAlt, FaSignOutAlt, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import "../styles.css"; // make sure to add navbar styles here
 
 export default function AppNavbar() {
     const { user, logout } = useAuth();
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-success">
+        <nav className="navbar navbar-expand-lg navbar-dark custom-navbar">
             <div className="container-fluid">
-                <NavLink className="navbar-brand" to="/">
+                <NavLink className="navbar-brand fw-bold" to="/">
                     CareerCrafter
                 </NavLink>
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/jobs">
-                                Jobs
+                                <FaBriefcase className="me-1" /> Jobs
                             </NavLink>
                         </li>
-
 
                         {user?.roles?.includes("employer") && (
                             <>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/employer/dashboard">
-                                        Employer Dashboard
+                                        <FaUserTie className="me-1" /> Employer Dashboard
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/employer/manage-jobs">
-                                        Manage Jobs
+                                        <FaClipboardList className="me-1" /> Manage Jobs
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/employer/applications">
-                                        Applications
+                                        <FaClipboardList className="me-1" /> Applications
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/employer/profile">
-                                        My Profile
+                                        <FaUser className="me-1" /> My Profile
                                     </NavLink>
                                 </li>
                             </>
@@ -48,20 +49,22 @@ export default function AppNavbar() {
                             <>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/profile">
-                                        My Profile
+                                        <FaUser className="me-1" /> My Profile
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to="/resume">My Resume</NavLink>
+                                    <NavLink className="nav-link" to="/resume">
+                                        <FaFileAlt className="me-1" /> My Resume
+                                    </NavLink>
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/jobseeker/applications">
-                                        My Applications
+                                        <FaClipboardList className="me-1" /> My Applications
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/recommendations">
-                                        Recommendations
+                                        <FaBriefcase className="me-1" /> Recommendations
                                     </NavLink>
                                 </li>
                             </>
@@ -78,10 +81,10 @@ export default function AppNavbar() {
                                 </li>
                                 <li className="nav-item">
                                     <button
-                                        className="btn btn-outline-light btn-sm"
+                                        className="btn btn-light btn-sm logout-btn"
                                         onClick={logout}
                                     >
-                                        Logout
+                                        <FaSignOutAlt className="me-1" /> Logout
                                     </button>
                                 </li>
                             </>
@@ -89,12 +92,12 @@ export default function AppNavbar() {
                             <>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/login">
-                                        Login
+                                        <FaSignInAlt className="me-1" /> Login
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/register">
-                                        Register
+                                        <FaUserPlus className="me-1" /> Register
                                     </NavLink>
                                 </li>
                             </>

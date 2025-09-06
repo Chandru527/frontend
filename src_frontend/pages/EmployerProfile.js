@@ -126,91 +126,104 @@ export default function EmployerProfile() {
     if (!uid) return <div>Please log in to access your profile.</div>;
 
     return (
-        <div className="container mt-4" style={{ maxWidth: "600px" }}>
-            <h2>My Employer Profile</h2>
+        <div className="profile-page">
+            <div className="profile-card container mt-4" style={{ maxWidth: "600px" }}>
+                <h2>My Employer Profile</h2>
 
-            {!editMode ? (
-                <>
-                    <p><strong>Company Name:</strong> {profileData?.companyName}</p>
-                    <p><strong>Company Description:</strong> {profileData?.companyDescription}</p>
-                    <p><strong>Position:</strong> {profileData?.position}</p>
-                    <button className="btn btn-primary me-2" onClick={() => setEditMode(true)}>
-                        Edit Profile
-                    </button>
-                    <button className="btn btn-danger" onClick={handleDeleteClick}>
-                        Delete Profile
-                    </button>
-                </>
-            ) : (
-                <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                    <div className="mb-3">
-                        <label className="form-label">Company Name</label>
-                        <input
-                            className={`form-control ${errors.companyName ? "is-invalid" : ""}`}
-                            {...register("companyName")}
-                        />
-                        <div className="invalid-feedback">{errors.companyName?.message}</div>
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Company Description</label>
-                        <textarea
-                            className={`form-control ${errors.companyDescription ? "is-invalid" : ""}`}
-                            {...register("companyDescription")}
-                            rows={4}
-                        />
-                        <div className="invalid-feedback">{errors.companyDescription?.message}</div>
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Position</label>
-                        <input
-                            className={`form-control ${errors.position ? "is-invalid" : ""}`}
-                            {...register("position")}
-                        />
-                        <div className="invalid-feedback">{errors.position?.message}</div>
-                    </div>
-                    <button disabled={isSubmitting} className="btn btn-primary w-100">
-                        {employerId ? "Update Profile" : "Create Profile"}
-                    </button>
-                    <button type="button" className="btn btn-secondary w-100 mt-2" onClick={() => setEditMode(false)}>
-                        Cancel
-                    </button>
-                </form>
-            )}
+                {!editMode ? (
+                    <div className="profile-fields">
+                        {[
+                            { label: "Company Name", value: profileData?.companyName },
+                            { label: "Company Description", value: profileData?.companyDescription },
+                            { label: "Position", value: profileData?.position },
+                        ].map((field, idx) => (
+                            <div key={idx} className="profile-row">
+                                <div className="profile-label">{field.label}:</div>
+                                <div className="profile-value">{field.value}</div>
+                            </div>
+                        ))}
 
-            {/* Delete Confirmation Modal */}
-            {showDeleteModal && (
-                <div className="modal d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content p-4">
-                            <h5 className="modal-title mb-3">Confirm Profile Deletion</h5>
-                            <p>Please enter your email and password to confirm profile deletion.</p>
+                        <div className="profile-actions">
+                            <button className="btn btn-primary" onClick={() => setEditMode(true)}>
+                                Edit Profile
+                            </button>
+                            <button className="btn btn-danger" onClick={handleDeleteClick}>
+                                Delete Profile
+                            </button>
+                        </div>
+                    </div>
+
+                ) : (
+                    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                        <div className="mb-3">
+                            <label className="form-label">Company Name</label>
                             <input
-                                type="email"
-                                className="form-control mb-2"
-                                placeholder="Email"
-                                value={deleteEmail}
-                                onChange={(e) => setDeleteEmail(e.target.value)}
+                                className={`form-control ${errors.companyName ? "is-invalid" : ""}`}
+                                {...register("companyName")}
                             />
+                            <div className="invalid-feedback">{errors.companyName?.message}</div>
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Company Description</label>
+                            <textarea
+                                className={`form-control ${errors.companyDescription ? "is-invalid" : ""}`}
+                                {...register("companyDescription")}
+                                rows={4}
+                            />
+                            <div className="invalid-feedback">{errors.companyDescription?.message}</div>
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Position</label>
                             <input
-                                type="password"
-                                className="form-control mb-2"
-                                placeholder="Password"
-                                value={deletePassword}
-                                onChange={(e) => setDeletePassword(e.target.value)}
+                                className={`form-control ${errors.position ? "is-invalid" : ""}`}
+                                {...register("position")}
                             />
-                            {deleteError && <div className="text-danger mb-2">{deleteError}</div>}
-                            <div className="d-flex justify-content-end">
-                                <button className="btn btn-secondary me-2" onClick={cancelDelete}>
-                                    Cancel
-                                </button>
-                                <button className="btn btn-danger" onClick={confirmDelete}>
-                                    Delete Profile
-                                </button>
+                            <div className="invalid-feedback">{errors.position?.message}</div>
+                        </div>
+                        <button disabled={isSubmitting} className="btn btn-primary w-100">
+                            {employerId ? "Update Profile" : "Create Profile"}
+                        </button>
+                        <button type="button" className="btn btn-secondary w-100 mt-2" onClick={() => setEditMode(false)}>
+                            Cancel
+                        </button>
+                    </form>
+                )}
+
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && (
+                    <div className="modal d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content p-4">
+                                <h5 className="modal-title mb-3">Confirm Profile Deletion</h5>
+                                <p>Please enter your email and password to confirm profile deletion.</p>
+                                <input
+                                    type="email"
+                                    className="form-control mb-2"
+                                    placeholder="Email"
+                                    value={deleteEmail}
+                                    onChange={(e) => setDeleteEmail(e.target.value)}
+                                />
+                                <input
+                                    type="password"
+                                    className="form-control mb-2"
+                                    placeholder="Password"
+                                    value={deletePassword}
+                                    onChange={(e) => setDeletePassword(e.target.value)}
+                                />
+                                {deleteError && <div className="text-danger mb-2">{deleteError}</div>}
+                                <div className="d-flex justify-content-end">
+                                    <button className="btn btn-secondary me-2" onClick={cancelDelete}>
+                                        Cancel
+                                    </button>
+                                    <button className="btn btn-danger" onClick={confirmDelete}>
+                                        Delete Profile
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }

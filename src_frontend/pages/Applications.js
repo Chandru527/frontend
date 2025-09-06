@@ -91,7 +91,6 @@ export default function Applications() {
                             applicationId: app.applicationId || app.id,
                             jobListingId: app.jobListingId || jobListing.id,
                             jobTitle: jobListing.title || app.jobTitle || "N/A",
-                            // Prefer companyName from nested jobListing or fallback to app
                             companyName: jobListing.companyName || app.companyName || "N/A",
                             applicationDate: app.applicationDate,
                             status: app.status || "Applied",
@@ -142,106 +141,112 @@ export default function Applications() {
 
     return (
         <div className="container mt-4">
-            <h2>My Applications</h2>
-            <div style={{ fontSize: 12, marginBottom: 10 }}>
-                <strong>Debug Info:</strong>
-                <br />
-                User ID: {user?.userId || user?.id}
-                <br />
-                JobSeeker ID: {jobSeekerId}
-                <br />
-                Applications: {applications.length}
-            </div>
-            {applications.length === 0 ? (
-                <div className="alert alert-warning">
-                    <h4>No Applications Found</h4>
-                    <p>You haven't applied to any jobs yet.</p>
-                    <p>
-                        Visit the <a href="/job-seeker-dashboard">Job Dashboard</a> to browse and apply for jobs.
-                    </p>
+            {/* Parent Card for Applications */}
+            <div className="card">
+                <div className="card-header">
+                    <h2>My Applications</h2>
                 </div>
-            ) : (
-                <div className="row">
-                    {applications.map((app) => (
-                        <div key={app.applicationId} className="col-md-6 mb-3">
-                            <div className="card position-relative">
-                                {/* Info Button Top Right */}
-                                <button
-                                    className="btn btn-light position-absolute"
-                                    style={{
-                                        top: 10,
-                                        right: 10,
-                                        borderRadius: "50%",
-                                        padding: "0.35rem 0.5rem",
-                                        fontWeight: "bold",
-                                    }}
-                                    aria-label="Info"
-                                    title="View Job Details"
-                                    onClick={() => handleShowJobDetails(app.jobListingId, app.jobListing)}
-                                >
-                                    i
-                                </button>
-                                <div className="card-body">
-                                    <h5 className="card-title mb-1">{app.jobTitle}</h5>
-                                    <div
-                                        className="text-muted mb-2"
-                                        style={{ fontSize: "0.97em" }}
-                                    >
-                                        <b>Company:</b> {app.companyName}
-                                    </div>
-                                    <p className="card-text mb-1">
-                                        <strong>Applied on:</strong> {app.applicationDate}
-                                    </p>
-                                    <p className="card-text mb-2">
-                                        <strong>Status:</strong>{" "}
-                                        <span
-                                            className={`badge ms-2 ${app.status.toLowerCase() === "pending"
-                                                    ? "bg-warning"
-                                                    : app.status.toLowerCase() === "accepted" ||
-                                                        app.status.toLowerCase() === "approved"
-                                                        ? "bg-success"
-                                                        : "bg-danger"
-                                                }`}
-                                        >
-                                            {app.status.toLowerCase() === "pending"
-                                                ? "Applied"
-                                                : app.status}
-                                        </span>
-                                    </p>
-                                    <small className="text-muted">
-                                        Application ID: {app.applicationId} &nbsp;|&nbsp; Job ID: {app.jobListingId}
-                                    </small>
-                                    {app.filePath ? (
-                                        <div style={{ marginTop: 8 }}>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-primary btn-sm"
-                                                onClick={() => viewResume(app.filePath)}
-                                            >
-                                                View Resume
-                                            </button>
-                                            <span
-                                                style={{
-                                                    marginLeft: 10,
-                                                    fontSize: "0.8em",
-                                                    color: "#666",
-                                                }}
-                                            >
-                                                {app.filePath.split(/[\\/]/).pop()}
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <div style={{ color: "#aaa", marginTop: 8 }}>
-                                            No Resume Attached
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+                <div className="card-body">
+                    <div style={{ fontSize: 12, marginBottom: 10 }}>
+                        <strong>Debug Info:</strong>
+                        <br />
+                        User ID: {user?.userId || user?.id}
+                        <br />
+                        JobSeeker ID: {jobSeekerId}
+                        <br />
+                        Applications: {applications.length}
+                    </div>
 
+                    {applications.length === 0 ? (
+                        <div className="alert alert-warning">
+                            <h4>No Applications Found</h4>
+                            <p>You haven't applied to any jobs yet.</p>
+                            <p>
+                                Visit the <a href="/job-seeker-dashboard">Job Dashboard</a> to browse and apply for jobs.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="row">
+                            {applications.map((app) => (
+                                <div key={app.applicationId} className="col-md-6 mb-3">
+                                    <div className="card position-relative">
+                                        <button
+                                            className="btn btn-light position-absolute"
+                                            style={{
+                                                top: 10,
+                                                right: 10,
+                                                borderRadius: "50%",
+                                                padding: "0.35rem 0.5rem",
+                                                fontWeight: "bold",
+                                            }}
+                                            aria-label="Info"
+                                            title="View Job Details"
+                                            onClick={() => handleShowJobDetails(app.jobListingId, app.jobListing)}
+                                        >
+                                            i
+                                        </button>
+                                        <div className="card-body">
+                                            <h5 className="card-title mb-1">{app.jobTitle}</h5>
+                                            <div
+                                                className="text-muted mb-2"
+                                                style={{ fontSize: "0.97em" }}
+                                            >
+                                                <b>Company:</b> {app.companyName}
+                                            </div>
+                                            <p className="card-text mb-1">
+                                                <strong>Applied on:</strong> {app.applicationDate}
+                                            </p>
+                                            <p className="card-text mb-2">
+                                                <strong>Status:</strong>{" "}
+                                                <span
+                                                    className={`badge ms-2 ${app.status.toLowerCase() === "pending"
+                                                        ? "bg-warning"
+                                                        : app.status.toLowerCase() === "accepted" ||
+                                                            app.status.toLowerCase() === "approved"
+                                                            ? "bg-success"
+                                                            : "bg-danger"
+                                                        }`}
+                                                >
+                                                    {app.status.toLowerCase() === "pending"
+                                                        ? "Applied"
+                                                        : app.status}
+                                                </span>
+                                            </p>
+                                            <small className="text-muted">
+                                                Application ID: {app.applicationId} &nbsp;|&nbsp; Job ID: {app.jobListingId}
+                                            </small>
+                                            {app.filePath ? (
+                                                <div style={{ marginTop: 8 }}>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-primary btn-sm"
+                                                        onClick={() => viewResume(app.filePath)}
+                                                    >
+                                                        View Resume
+                                                    </button>
+                                                    <span
+                                                        style={{
+                                                            marginLeft: 10,
+                                                            fontSize: "0.8em",
+                                                            color: "#666",
+                                                        }}
+                                                    >
+                                                        {app.filePath.split(/[\\/]/).pop()}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <div style={{ color: "#aaa", marginTop: 8 }}>
+                                                    No Resume Attached
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
             {showJobModal && jobDetails && (
                 <div
                     className="modal d-block"

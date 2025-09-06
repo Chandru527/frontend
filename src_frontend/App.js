@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Recommendations from "./pages/Recommendations";
 import ResumeUpload from "./pages/ResumeUpload";
 import PrivateRoute from "./routes/PrivateRoute";
+import './styles.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function App() {

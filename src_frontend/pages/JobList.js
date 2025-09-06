@@ -51,7 +51,7 @@ export default function JobList() {
                 <select
                     value={sort}
                     onChange={(e) => setSort(e.target.value)}
-                    className="form-select w-auto"
+                    className="sort-select"
                 >
                     <option value="latest">Latest Uploads</option>
                     <option value="oldest">Oldest Uploads</option>

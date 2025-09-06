@@ -1,0 +1,275 @@
+/* ------------------ GLOBAL ------------------ */
+body {
+    background: linear-gradient(rgba(210, 208, 227, 0.4), rgba(195, 192, 213, 0.4)),
+        url('./assets/home-bg.jpeg') no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+/* ------------------ NAVBAR ------------------ */
+.navbar {
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+}
+
+.navbar .nav-link {
+    color: #f8f9fa;
+    font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+    color: #ffe082;
+}
+
+.navbar .nav-link.active {
+    border-bottom: 2px solid #ffe082;
+    font-weight: bold;
+}
+
+/* ------------------ HOME PAGE ------------------ */
+.home-container {
+    height: 90vh;
+    width: 100%;
+    background: linear-gradient(rgba(106, 17, 203, 0.85), rgba(37, 117, 252, 0.85)),
+        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+        url('./assets/home-bg.jpeg') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #fff;
+}
+
+.brand-text {
+    color: #ffe082;
+    font-weight: bold;
+}
+
+.home-btn {
+    border-radius: 25px;
+    padding: 8px 20px;
+    transition: all 0.3s ease;
+}
+
+.home-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ------------------ FORM PAGES ------------------ */
+.row.justify-content-center {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+}
+
+.col-md-5,
+.col-md-6 {
+    background: rgba(106, 17, 203, 0.85);
+    padding: 20px;
+    border-radius: 10px;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.input-group .btn {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.input-group .btn:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Form controls */
+.form-control,
+.form-select {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.form-control::placeholder,
+.form-text,
+a {
+    color: #ffe082;
+}
+
+/* ------------------ JOB LIST ------------------ */
+.d-flex.gap-2.mb-3.align-items-center input,
+.d-flex.gap-2.mb-3.align-items-center select {
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #000;
+}
+
+/* Card styles */
+.card {
+    background-color: rgba(170, 157, 184, 0.7);
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    background-color: rgba(238, 243, 244, 0.9);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.card p {
+    margin-bottom: 5px;
+}
+
+.card .btn-view {
+    background-color: #00d4ff;
+    color: #d5c1e3;
+    border: none;
+    border-radius: 3px;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.card .btn-view:hover {
+    background-color: #00a3cc;
+    color: #fff;
+}
+
+.card .btn-delete {
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.card .btn-delete:hover {
+    background-color: #cc0000;
+}
+
+/* Dropdown fix */
+.d-flex.gap-2.mb-3.align-items-center select {
+    width: auto;
+}
+
+/* Job title / topic */
+.card h5,
+.page-title {
+    color: #ed8208;
+    font-weight: bold;
+}
+
+/* Back button styling */
+.btn-back {
+    background-color: #6a11cb;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #2575fc;
+    transform: translateY(-2px);
+}
+
+/* Sort dropdown fix */
+.sort-select {
+    border-radius: 5px;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #000;
+    margin-left: 10px;
+    min-width: 160px;
+}
+
+/* ------------------ PROFILE CARD ------------------ */
+.profile-card {
+    max-width: 600px;
+    margin: 2rem auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.profile-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.profile-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.profile-label {
+    flex: 0 0 150px;
+    font-weight: 600;
+    color: #333;
+}
+
+.profile-value {
+    flex: 1;
+    color: #555;
+}
+
+.profile-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Employer Applications Cards */
+.container .row .col-md-12 .card {
+    border: 2px solid #6a11cb;
+
+}
+
+.container .row .col-md-12 .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
+}
+
+/* Job Cards */
+.container.mt-4 .card {
+    border: 2px solid #6a11cb;
+    /* Purple border */
+    border-radius: 8px;
+    background-color: #fff;
+    /* White background for readability */
+    transition: all 0.3s ease;
+}
+
+.container.mt-4 .card:hover {
+    background-color: #f5f5ff;
+    /* Light purple shade */
+    border-color: #8a2be2;
+    /* Darker purple on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
+}

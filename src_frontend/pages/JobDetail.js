@@ -92,8 +92,7 @@ export default function JobDetail() {
 
     return (
         <div className="container mt-4">
-            {/* Back Button visible for both roles */}
-            <button className="btn btn-outline-secondary mb-3" onClick={() => navigate(-1)}>
+            <button className="btn-back mb-3" onClick={() => navigate(-1)}>
                 &larr; Back
             </button>
 
@@ -114,22 +113,35 @@ export default function JobDetail() {
                         </div>
                     )}
                 </div>
+
                 <div className="card-body">
-                    <p><strong>Company:</strong> {job.companyName || "N/A"}</p>
-                    <p><strong>Location:</strong> {job.location}</p>
-                    <p><strong>Experience:</strong> {job.experience || "N/A"}</p>
-                    <p><strong>Job Type:</strong> {job.jobType || "N/A"}</p>
-                    <p><strong>Salary:</strong> ${job.salary}</p>
-                    <p><strong>Posted Date:</strong> {job.postedDate || "N/A"}</p>
-                    <p><strong>Required Skills:</strong> {job.requiredSkills || "N/A"}</p>
+                    <div className="profile-fields">
+                        {[
+                            { label: "Company", value: job.companyName },
+                            { label: "Location", value: job.location },
+                            { label: "Experience", value: job.experience },
+                            { label: "Job Type", value: job.jobType },
+                            { label: "Salary", value: `$${job.salary}` },
+                            { label: "Posted Date", value: job.postedDate },
+                            { label: "Required Skills", value: job.requiredSkills },
+                        ].map((field, idx) => (
+                            <div key={idx} className="profile-row">
+                                <div className="profile-label">{field.label}:</div>
+                                <div className="profile-value">{field.value || "N/A"}</div>
+                            </div>
+                        ))}
 
-                    <h5>Job Description:</h5>
-                    <p>{job.description}</p>
+                        <div className="profile-row">
+                            <div className="profile-label">Job Description:</div>
+                            <div className="profile-value">{job.description}</div>
+                        </div>
 
-                    <h5>Qualifications:</h5>
-                    <p>{job.qualifications}</p>
+                        <div className="profile-row">
+                            <div className="profile-label">Qualifications:</div>
+                            <div className="profile-value">{job.qualifications}</div>
+                        </div>
+                    </div>
 
-                    {/* Apply button for Job Seekers */}
                     {isJobSeeker && (
                         <div className="card mt-3">
                             <div className="card-body text-center">

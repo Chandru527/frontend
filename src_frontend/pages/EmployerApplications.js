@@ -129,127 +129,131 @@ export default function EmployerApplications() {
     if (loading) return <div>Loading applications...</div>;
 
     return (
-        <div className="container mt-4">
-            <h2>Job Applications</h2>
-            {applications.length === 0 ? (
-                <div className="alert alert-info">
-                    <h4>No Applications Yet</h4>
-                    <p>You haven't received any job applications.</p>
+        <div className="col-md-12 mb-3">
+            <div className="card">
+                <div className="card-body">
+                    <h2>Job Applications</h2>
                 </div>
-            ) : (
-                <div className="row">
-                    {applications.map((application) => (
-                        <div key={application.applicationId} className="col-md-12 mb-3">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="row">
-                                        <div className="col-md-8">
-                                            <h5 className="card-title">{application.jobTitle}</h5>
-                                            <p className="card-text">
-                                                <strong>Applicant:</strong> {application.applicantName}
-                                                <br />
-                                                <strong>Applied on:</strong> {application.applicationDate}
-                                                <br />
-                                                <strong>Status:</strong>{" "}
-                                                <span
-                                                    className={
-                                                        application.status.toLowerCase() === "pending"
-                                                            ? "badge bg-warning"
-                                                            : application.status.toLowerCase() === "approved"
-                                                                ? "badge bg-success"
-                                                                : "badge bg-danger"
-                                                    }
-                                                >
-                                                    {application.status}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div className="col-md-4 text-end">
-                                            {application.status.toLowerCase() === "pending" && (
-                                                <div className="btn-group" role="group">
-                                                    <button
-                                                        className="btn btn-success btn-sm"
-                                                        onClick={() =>
-                                                            updateApplicationStatus(application.applicationId, "APPROVED")
+                {applications.length === 0 ? (
+                    <div className="alert alert-info">
+                        <h4>No Applications Yet</h4>
+                        <p>You haven't received any job applications.</p>
+                    </div>
+                ) : (
+                    <div className="row">
+                        {applications.map((application) => (
+                            <div key={application.applicationId} className="col-md-12 mb-3">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="row">
+                                            <div className="col-md-8">
+                                                <h5 className="card-title">{application.jobTitle}</h5>
+                                                <p className="card-text">
+                                                    <strong>Applicant:</strong> {application.applicantName}
+                                                    <br />
+                                                    <strong>Applied on:</strong> {application.applicationDate}
+                                                    <br />
+                                                    <strong>Status:</strong>{" "}
+                                                    <span
+                                                        className={
+                                                            application.status.toLowerCase() === "pending"
+                                                                ? "badge bg-warning"
+                                                                : application.status.toLowerCase() === "approved"
+                                                                    ? "badge bg-success"
+                                                                    : "badge bg-danger"
                                                         }
                                                     >
-                                                        Approve
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-danger btn-sm"
-                                                        onClick={() =>
-                                                            updateApplicationStatus(application.applicationId, "REJECTED")
-                                                        }
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </div>
-                                            )}
+                                                        {application.status}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div className="col-md-4 text-end">
+                                                {application.status.toLowerCase() === "pending" && (
+                                                    <div className="btn-group" role="group">
+                                                        <button
+                                                            className="btn btn-success btn-sm"
+                                                            onClick={() =>
+                                                                updateApplicationStatus(application.applicationId, "APPROVED")
+                                                            }
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-danger btn-sm"
+                                                            onClick={() =>
+                                                                updateApplicationStatus(application.applicationId, "REJECTED")
+                                                            }
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    </div>
+                                                )}
 
-                                            {application.filePath && (
+                                                {application.filePath && (
+                                                    <div className="mt-2">
+                                                        <button
+                                                            className="btn btn-outline-primary btn-sm"
+                                                            onClick={() => viewResume(application.filePath)}
+                                                        >
+                                                            View Resume
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                {/* View Profile Button */}
                                                 <div className="mt-2">
                                                     <button
-                                                        className="btn btn-outline-primary btn-sm"
-                                                        onClick={() => viewResume(application.filePath)}
+                                                        className="btn btn-outline-secondary btn-sm"
+                                                        onClick={() => viewProfile(application.jobSeekerId)} // Ensure jobSeekerId exists on application
                                                     >
-                                                        View Resume
+                                                        View Profile
                                                     </button>
                                                 </div>
-                                            )}
-
-                                            {/* View Profile Button */}
-                                            <div className="mt-2">
-                                                <button
-                                                    className="btn btn-outline-secondary btn-sm"
-                                                    onClick={() => viewProfile(application.jobSeekerId)} // Ensure jobSeekerId exists on application
-                                                >
-                                                    View Profile
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Job Seeker Profile Display */}
-                            {viewingSeeker && viewingSeeker.jobSeekerId === application.jobSeekerId && (
-                                <div className="card mt-3">
-                                    <div className="card-body">
-                                        {loadingSeeker ? (
-                                            <p>Loading profile...</p>
-                                        ) : (
-                                            <>
-                                                <h5>Applicant Profile</h5>
-                                                <p>
-                                                    <strong>Name:</strong> {viewingSeeker.fullName}
-                                                </p>
-                                                <p>
-                                                    <strong>Email:</strong> {viewingSeeker.email}
-                                                </p>
-                                                <p>
-                                                    <strong>Phone:</strong> {viewingSeeker.phone}
-                                                </p>
-                                                <p>
-                                                    <strong>Address:</strong> {viewingSeeker.address}
-                                                </p>
-                                                <p>
-                                                    <strong>Education:</strong> {viewingSeeker.education}
-                                                </p>
-                                                <p>
-                                                    <strong>Experience:</strong> {viewingSeeker.experience}
-                                                </p>
-                                                <button className="btn btn-sm btn-outline-secondary" onClick={closeProfile}>
-                                                    Back to Applications
-                                                </button>
-                                            </>
-                                        )}
+                                {/* Job Seeker Profile Display */}
+                                {viewingSeeker && viewingSeeker.jobSeekerId === application.jobSeekerId && (
+                                    <div className="card mt-3">
+                                        <div className="card-body">
+                                            {loadingSeeker ? (
+                                                <p>Loading profile...</p>
+                                            ) : (
+                                                <>
+                                                    <h5>Applicant Profile</h5>
+                                                    <p>
+                                                        <strong>Name:</strong> {viewingSeeker.fullName}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Email:</strong> {viewingSeeker.email}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Phone:</strong> {viewingSeeker.phone}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Address:</strong> {viewingSeeker.address}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Education:</strong> {viewingSeeker.education}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Experience:</strong> {viewingSeeker.experience}
+                                                    </p>
+                                                    <button className="btn btn-sm btn-outline-secondary" onClick={closeProfile}>
+                                                        Back to Applications
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            )}
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

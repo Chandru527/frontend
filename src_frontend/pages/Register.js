@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axiosClient from "../api/axiosClient";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const schema = yup.object({
     name: yup.string().required().min(2),
@@ -13,11 +14,19 @@ const schema = yup.object({
 });
 
 export default function Register() {
-    const { register, handleSubmit, watch, formState: { errors, isSubmitting } } =
-        useForm({ resolver: yupResolver(schema) });
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors, isSubmitting }
+    } = useForm({ resolver: yupResolver(schema) });
 
     const nav = useNavigate();
     const pwd = watch("password");
+
+    // Added states to toggle password visibility
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const strength = () => {
         if (!pwd) return "—";
@@ -52,41 +61,89 @@ export default function Register() {
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <div className="mb-3">
                         <label className="form-label">Full Name</label>
-                        <input className={`form-control ${errors.name ? 'is-invalid' : ''}`} {...register("name")} />
+                        <input
+                            className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                            {...register("name")}
+                        />
                         <div className="invalid-feedback">{errors.name?.message}</div>
                     </div>
 
                     <div className="mb-3">
                         <label className="form-label">Email</label>
-                        <input className={`form-control ${errors.email ? 'is-invalid' : ''}`} {...register("email")} />
+                        <input
+                            className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                            {...register("email")}
+                        />
                         <div className="invalid-feedback">{errors.email?.message}</div>
                     </div>
 
                     <div className="mb-3">
                         <label className="form-label">I am a</label>
-                        <select className={`form-select ${errors.role ? 'is-invalid' : ''}`} {...register("role")}>
+                        <select
+                            className={`form-select ${errors.role ? "is-invalid" : ""}`}
+                            {...register("role")}
+                        >
                             <option value="">Select</option>
                             <option value="job_seeker">Job Seeker</option>
                             <option value="employer">Employer</option>
                         </select>
-
                         <div className="invalid-feedback">{errors.role?.message}</div>
                     </div>
 
                     <div className="mb-3">
                         <label className="form-label">Password</label>
-                        <input type="password" className={`form-control ${errors.password ? 'is-invalid' : ''}`} {...register("password")} />
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                                {...register("password")}
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex={-1}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                            >
+                                {showPassword ? (
+                                    <i className="bi bi-eye-slash"></i>
+                                ) : (
+                                    <i className="bi bi-eye"></i>
+                                )}
+                            </button>
+                        </div>
                         <div className="form-text">Strength: {strength()}</div>
                         <div className="invalid-feedback">{errors.password?.message}</div>
                     </div>
 
                     <div className="mb-3">
                         <label className="form-label">Confirm Password</label>
-                        <input type="password" className={`form-control ${errors.confirm ? 'is-invalid' : ''}`} {...register("confirm")} />
+                        <div className="input-group">
+                            <input
+                                type={showConfirm ? "text" : "password"}
+                                className={`form-control ${errors.confirm ? "is-invalid" : ""}`}
+                                {...register("confirm")}
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary"
+                                onClick={() => setShowConfirm(!showConfirm)}
+                                tabIndex={-1}
+                                aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                            >
+                                {showConfirm ? (
+                                    <i className="bi bi-eye-slash"></i>
+                                ) : (
+                                    <i className="bi bi-eye"></i>
+                                )}
+                            </button>
+                        </div>
                         <div className="invalid-feedback">{errors.confirm?.message}</div>
                     </div>
 
-                    <button disabled={isSubmitting} className="btn btn-success w-100">Register</button>
+                    <button disabled={isSubmitting} className="btn btn-success w-100">
+                        Register
+                    </button>
                 </form>
             </div>
         </div>

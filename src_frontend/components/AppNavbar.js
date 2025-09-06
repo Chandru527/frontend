@@ -47,11 +47,6 @@ export default function AppNavbar() {
                         {user?.roles?.includes("job_seeker") && (
                             <>
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to="/jobseeker/dashboard">
-                                        JobSeeker Dashboard
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
                                     <NavLink className="nav-link" to="/profile">
                                         My Profile
                                     </NavLink>

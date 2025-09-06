@@ -6,7 +6,6 @@ import Register from "./pages/Register";
 import JobList from "./pages/JobList";
 import JobDetail from "./pages/JobDetail";
 import EmployerDashboard from "./pages/EmployerDashboard";
-import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import PostJob from "./pages/PostJob";
 import ManageJobs from "./pages/ManageJobs";
 import Applications from "./pages/Applications";
@@ -15,6 +14,7 @@ import Profile from "./pages/Profile";
 import Recommendations from "./pages/Recommendations";
 import ResumeUpload from "./pages/ResumeUpload";
 import PrivateRoute from "./routes/PrivateRoute";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function App() {
   return (
@@ -39,7 +39,6 @@ function App() {
 
 
           <Route element={<PrivateRoute roles={["job_seeker"]} />}>
-            <Route path="/jobseeker/dashboard" element={<JobSeekerDashboard />} />
             <Route path="/jobseeker/applications" element={<Applications />} />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/profile" element={<Profile />} />

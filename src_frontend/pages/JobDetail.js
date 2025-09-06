@@ -8,38 +8,42 @@ export default function JobDetail() {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [job, setJob] = useState(null);
-    const [editMode, setEditMode] = useState(false);
     const [employerId, setEmployerId] = useState(null);
+    const [jobSeekerId, setJobSeekerId] = useState(null);
 
+    // Fetch employer info
     useEffect(() => {
         if (!user?.userId && !user?.id) return;
         const uid = user?.userId || user?.id;
         if (user?.roles?.includes("employer")) {
             axiosClient
                 .get(`/employers/by-user/${uid}`)
-                .then(({ data }) => {
-                    setEmployerId(data.employerId || data.id);
-                })
-                .catch((err) => {
-                    console.error("Failed to fetch employer info:", err);
-                });
+                .then(({ data }) => setEmployerId(data.employerId || data.id))
+                .catch((err) => console.error("Failed to fetch employer info:", err));
         }
     }, [user]);
 
+    // Fetch job seeker id for job seeker role
     useEffect(() => {
-        (async () => {
-            try {
-                const { data } = await axiosClient.get(`/job-listings/getbyid/${id}`);
-                setJob(data);
-            } catch (err) {
-                console.error("Error fetching job:", err);
-            }
-        })();
+        if (!user || !user?.roles.includes("job_seeker")) return;
+        const jobSeekerIdValue = user.userId || user.id;
+        axiosClient
+            .get(`/job-seekers/by-user/${jobSeekerIdValue}`)
+            .then(({ data }) => setJobSeekerId(data.jobSeekerId || data.id))
+            .catch(() => setJobSeekerId(null));
+    }, [user]);
+
+    // Fetch job details
+    useEffect(() => {
+        axiosClient
+            .get(`/job-listings/getbyid/${id}`)
+            .then(({ data }) => setJob(data))
+            .catch((err) => console.error("Error fetching job:", err));
     }, [id]);
 
+    // Delete Job (Employer)
     const deleteJob = async () => {
         if (!window.confirm(`Are you sure you want to delete "${job.title}"?`)) return;
-
         try {
             await axiosClient.delete(`/job-listings/delete/${id}`);
             alert("Job deleted successfully");
@@ -50,218 +54,95 @@ export default function JobDetail() {
         }
     };
 
-    const updateJob = async () => {
-        try {
-            const jobPayload = {
-                ...job,
-                employerId: job.employerId,
-            };
-
-            await axiosClient.put(`/job-listings/update/${id}`, jobPayload);
-            alert("Job updated successfully");
-            setEditMode(false);
-        } catch (err) {
-            console.error("Update failed", err);
-            alert("Failed to update job: " + (err.response?.data?.message || err.message));
+    // Apply for Job (Job Seeker)
+    const applyForJob = async (jobListingId) => {
+        if (!jobSeekerId) {
+            alert("Please complete your profile first!");
+            return;
         }
-    };
-
-    const cancelEdit = () => {
-        axiosClient.get(`/job-listings/getbyid/${id}`)
-            .then(({ data }) => {
-                setJob(data);
-                setEditMode(false);
-            })
-            .catch((err) => {
-                console.error("Error reloading job:", err);
-            });
+        try {
+            const { data: resumeData } = await axiosClient.get(`/resumes/by-user/${jobSeekerId}`);
+            const filePath = resumeData?.filePath;
+            if (!filePath) {
+                alert("Please upload your resume before applying.");
+                return;
+            }
+            const payload = {
+                jobSeekerId,
+                jobListingId,
+                status: "pending",
+                applicationDate: new Date().toISOString().slice(0, 10),
+                filePath,
+            };
+            await axiosClient.post("/applications/apply", payload);
+            alert("Application submitted successfully!");
+        } catch (error) {
+            if (error.response?.status === 404) {
+                alert("Please upload your resume before applying.");
+            } else {
+                alert(error.response?.data?.message || "Failed to submit application.");
+            }
+        }
     };
 
     if (!job) return <p>Loading...</p>;
 
     const isOwner = user?.roles?.includes("employer") && employerId && job.employerId === employerId;
+    const isJobSeeker = user?.roles?.includes("job_seeker");
 
     return (
         <div className="container mt-4">
+            {/* Back Button visible for both roles */}
+            <button className="btn btn-outline-secondary mb-3" onClick={() => navigate(-1)}>
+                &larr; Back
+            </button>
+
             <div className="card">
                 <div className="card-header d-flex justify-content-between align-items-center">
-                    <h3>{editMode ? "Edit Job" : job.title}</h3>
+                    <h3>{job.title}</h3>
                     {isOwner && (
                         <div>
-                            {!editMode ? (
-                                <>
-                                    <button
-                                        className="btn btn-outline-primary btn-sm me-2"
-                                        onClick={() => setEditMode(true)}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        className="btn btn-outline-danger btn-sm"
-                                        onClick={deleteJob}
-                                    >
-                                        Delete
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <button
-                                        className="btn btn-success btn-sm me-2"
-                                        onClick={updateJob}
-                                    >
-                                        Save
-                                    </button>
-                                    <button
-                                        className="btn btn-secondary btn-sm"
-                                        onClick={cancelEdit}
-                                    >
-                                        Cancel
-                                    </button>
-                                </>
-                            )}
+                            <button
+                                className="btn btn-outline-primary btn-sm me-2"
+                                onClick={() => navigate("/employer/manage-jobs")}
+                            >
+                                Edit
+                            </button>
+                            <button className="btn btn-outline-danger btn-sm" onClick={deleteJob}>
+                                Delete
+                            </button>
                         </div>
                     )}
                 </div>
                 <div className="card-body">
-                    <div className="row">
-                        <div className="col-md-8">
-                            {editMode ? (
-                                <>
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Job Title:</strong></label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={job.title}
-                                            onChange={(e) => setJob({ ...job, title: e.target.value })}
-                                        />
-                                    </div>
+                    <p><strong>Company:</strong> {job.companyName || "N/A"}</p>
+                    <p><strong>Location:</strong> {job.location}</p>
+                    <p><strong>Experience:</strong> {job.experience || "N/A"}</p>
+                    <p><strong>Job Type:</strong> {job.jobType || "N/A"}</p>
+                    <p><strong>Salary:</strong> ${job.salary}</p>
+                    <p><strong>Posted Date:</strong> {job.postedDate || "N/A"}</p>
+                    <p><strong>Required Skills:</strong> {job.requiredSkills || "N/A"}</p>
 
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Company:</strong></label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={job.companyName || ""}
-                                            onChange={(e) => setJob({ ...job, companyName: e.target.value })}
-                                        />
-                                    </div>
+                    <h5>Job Description:</h5>
+                    <p>{job.description}</p>
 
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Location:</strong></label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={job.location}
-                                            onChange={(e) => setJob({ ...job, location: e.target.value })}
-                                        />
-                                    </div>
+                    <h5>Qualifications:</h5>
+                    <p>{job.qualifications}</p>
 
-                                    <div className="mb-3">
-                                        <label className="form-label">Experience</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={job.experience || ""}
-                                            onChange={e => setJob({ ...job, experience: e.target.value })}
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Job Type:</strong></label>
-                                        <select
-                                            className="form-select"
-                                            value={job.jobType || ""}
-                                            onChange={(e) => setJob({ ...job, jobType: e.target.value })}
-                                        >
-                                            <option value="">Select Job Type</option>
-                                            <option value="Full-Time">Full-Time</option>
-                                            <option value="Intern">Intern</option>
-                                        </select>
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Salary:</strong></label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            value={job.salary}
-                                            onChange={(e) => setJob({ ...job, salary: e.target.value })}
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Posted Date:</strong></label>
-                                        <input
-                                            type="date"
-                                            className="form-control"
-                                            value={job.postedDate || ""}
-                                            onChange={(e) => setJob({ ...job, postedDate: e.target.value })}
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Job Description:</strong></label>
-                                        <textarea
-                                            className="form-control"
-                                            rows="5"
-                                            value={job.description}
-                                            onChange={(e) => setJob({ ...job, description: e.target.value })}
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Qualifications:</strong></label>
-                                        <textarea
-                                            className="form-control"
-                                            rows="4"
-                                            value={job.qualifications}
-                                            onChange={(e) => setJob({ ...job, qualifications: e.target.value })}
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label className="form-label"><strong>Required Skills:</strong></label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={job.requiredSkills || ""}
-                                            onChange={(e) => setJob({ ...job, requiredSkills: e.target.value })}
-                                            placeholder="Comma separated skills"
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <p><strong>Company:</strong> {job.companyName || "N/A"}</p>
-                                    <p><strong>Location:</strong> {job.location}</p>
-                                    <p><strong>Experience:</strong> {job.experience || "N/A"}</p>
-                                    <p><strong>Job Type:</strong> {job.jobType || "N/A"}</p>
-                                    <p><strong>Salary:</strong> ${job.salary}</p>
-                                    <p><strong>Posted Date:</strong> {job.postedDate || "N/A"}</p>
-                                    <p><strong>Required Skills:</strong> {job.requiredSkills || "N/A"}</p>
-
-                                    <h5>Job Description:</h5>
-                                    <p>{job.description}</p>
-
-                                    <h5>Qualifications:</h5>
-                                    <p>{job.qualifications}</p>
-                                </>
-                            )}
+                    {/* Apply button for Job Seekers */}
+                    {isJobSeeker && (
+                        <div className="card mt-3">
+                            <div className="card-body text-center">
+                                <h6>Interested in this position?</h6>
+                                <button
+                                    className="btn btn-success"
+                                    onClick={() => applyForJob(job.jobListingId || job.id)}
+                                >
+                                    Apply Now
+                                </button>
+                            </div>
                         </div>
-                        <div className="col-md-4">
-                            {user?.roles?.includes("job_seeker") && !editMode && (
-                                <div className="card">
-                                    <div className="card-body text-center">
-                                        <h6>Interested in this position?</h6>
-                                        <button className="btn btn-success">
-                                            Apply Now
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

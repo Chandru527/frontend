@@ -3,21 +3,28 @@ import axiosClient from "../api/axiosClient";
 import { useAuth } from "../context/AuthContext";
 import * as mammoth from "mammoth";
 
-
 export default function EmployerApplications() {
     const { user } = useAuth();
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [employerId, setEmployerId] = useState(null);
 
+    // State to hold currently viewed job seeker profile
+    const [viewingSeeker, setViewingSeeker] = useState(null);
+    const [loadingSeeker, setLoadingSeeker] = useState(false);
+
     const uid = user?.userId || user?.id;
 
+    // View Resume function (unchanged)
     const viewResume = async (filePath) => {
         if (!filePath) {
             alert("No resume available");
             return;
         }
-        if (filePath.toLowerCase().endsWith(".docx") || filePath.toLowerCase().endsWith(".doc")) {
+        if (
+            filePath.toLowerCase().endsWith(".docx") ||
+            filePath.toLowerCase().endsWith(".doc")
+        ) {
             try {
                 const response = await axiosClient.get(`/resumes/download`, {
                     params: { path: filePath },
@@ -27,7 +34,9 @@ export default function EmployerApplications() {
                             "application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword",
                     },
                 });
-                const { value: html } = await mammoth.convertToHtml({ arrayBuffer: response.data });
+                const { value: html } = await mammoth.convertToHtml({
+                    arrayBuffer: response.data,
+                });
                 const preview = window.open("", "_blank");
                 preview.document.write(html);
                 preview.document.close();
@@ -59,7 +68,7 @@ export default function EmployerApplications() {
         }
     };
 
-
+    // Fetch applications and employerId (unchanged)
     useEffect(() => {
         if (!uid) {
             setLoading(false);
@@ -84,6 +93,7 @@ export default function EmployerApplications() {
             });
     }, [uid]);
 
+    // Update application status (unchanged)
     const updateApplicationStatus = (applicationId, newStatus) => {
         axiosClient
             .put(`/applications/update/${applicationId}`, { status: newStatus })
@@ -99,6 +109,22 @@ export default function EmployerApplications() {
                 alert("Failed to update status");
             });
     };
+
+    // New: fetch and show job seeker profile
+    const viewProfile = async (jobSeekerId) => {
+        setLoadingSeeker(true);
+        try {
+            const { data } = await axiosClient.get(`/job-seekers/getbyid/${jobSeekerId}`);
+            setViewingSeeker(data);
+        } catch (err) {
+            console.error("Error fetching job seeker profile:", err);
+            alert("Failed to load job seeker profile.");
+        } finally {
+            setLoadingSeeker(false);
+        }
+    };
+
+    const closeProfile = () => setViewingSeeker(null);
 
     if (loading) return <div>Loading applications...</div>;
 
@@ -159,6 +185,7 @@ export default function EmployerApplications() {
                                                     </button>
                                                 </div>
                                             )}
+
                                             {application.filePath && (
                                                 <div className="mt-2">
                                                     <button
@@ -169,10 +196,56 @@ export default function EmployerApplications() {
                                                     </button>
                                                 </div>
                                             )}
+
+                                            {/* View Profile Button */}
+                                            <div className="mt-2">
+                                                <button
+                                                    className="btn btn-outline-secondary btn-sm"
+                                                    onClick={() => viewProfile(application.jobSeekerId)} // Ensure jobSeekerId exists on application
+                                                >
+                                                    View Profile
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Job Seeker Profile Display */}
+                            {viewingSeeker && viewingSeeker.jobSeekerId === application.jobSeekerId && (
+                                <div className="card mt-3">
+                                    <div className="card-body">
+                                        {loadingSeeker ? (
+                                            <p>Loading profile...</p>
+                                        ) : (
+                                            <>
+                                                <h5>Applicant Profile</h5>
+                                                <p>
+                                                    <strong>Name:</strong> {viewingSeeker.fullName}
+                                                </p>
+                                                <p>
+                                                    <strong>Email:</strong> {viewingSeeker.email}
+                                                </p>
+                                                <p>
+                                                    <strong>Phone:</strong> {viewingSeeker.phone}
+                                                </p>
+                                                <p>
+                                                    <strong>Address:</strong> {viewingSeeker.address}
+                                                </p>
+                                                <p>
+                                                    <strong>Education:</strong> {viewingSeeker.education}
+                                                </p>
+                                                <p>
+                                                    <strong>Experience:</strong> {viewingSeeker.experience}
+                                                </p>
+                                                <button className="btn btn-sm btn-outline-secondary" onClick={closeProfile}>
+                                                    Back to Applications
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>

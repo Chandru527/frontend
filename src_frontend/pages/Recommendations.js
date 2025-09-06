@@ -37,38 +37,76 @@ export default function Recommendations() {
             {jobs.length === 0 ? (
                 <p>No recommendations at this time.</p>
             ) : (
-                jobs.map((job) => (
-                    <div key={job.jobListingId} className="card mb-3">
-                        <div className="card-body">
-                            <h5 className="card-title">{job.title || "No title provided"}</h5>
-                            <p>
-                                <strong>Company:</strong> {job.companyName || "Not specified"}
-                            </p>
-                            <p>
-                                <strong>Location:</strong> {job.location || "Not specified"}
-                            </p>
-                            <p>
-                                <strong>Qualifications:</strong> {job.qualifications || "Not specified"}
-                            </p>
-                            <p>
-                                <strong>Required Skills:</strong> {job.requiredSkills || "Not specified"}
-                            </p>
-                            <p>
-                                <strong>Job Type:</strong> {job.jobType || "Not specified"}
-                            </p>
-                            <p>
-                                <strong>Experience:</strong> {job.experience || "Not specified"}
-                            </p>
-                            <p>
-                                <strong>Salary:</strong> {job.salary ? `$${job.salary}` : "Not specified"}
-                            </p>
-                            <p>
-                                <strong>Posted Date:</strong> {job.postedDate || "Not specified"}
-                            </p>
-                            <p>{job.description || "No description provided."}</p>
+                jobs.map((job) => {
+                    const { matchedLocation, matchedQualification } = job; // Assumed flags
+
+                    // Prepare badges array
+                    const badges = [];
+                    if (matchedLocation) {
+                        badges.push(
+                            <span key="loc" className="badge bg-success ms-2" title="Matched by location">
+                                Location Match
+                            </span>
+                        );
+                    }
+                    if (matchedQualification) {
+                        badges.push(
+                            <span key="qual" className="badge bg-info ms-2" title="Matched by qualification">
+                                Qualification Match
+                            </span>
+                        );
+                    }
+
+                    // Card border color based on matches
+                    let borderColor = "";
+                    if (matchedLocation && matchedQualification) borderColor = "#0d6efd";
+                    else if (matchedLocation) borderColor = "#198754";
+                    else if (matchedQualification) borderColor = "#0dcaf0";
+
+                    return (
+                        <div
+                            key={job.jobId || job.jobListingId}
+                            className="card mb-3"
+                            style={{
+                                borderWidth: matchedLocation || matchedQualification ? "3px" : "1px",
+                                borderColor: borderColor || undefined,
+                                borderStyle: matchedLocation || matchedQualification ? "solid" : undefined,
+                            }}
+                        >
+                            <div className="card-body">
+                                <h5>
+                                    {job.title || "No title provided"}
+                                    {badges}
+                                </h5>
+                                <p>
+                                    <strong>Company:</strong> {job.companyName || "Not specified"}
+                                </p>
+                                <p>
+                                    <strong>Location:</strong> {job.location || "Not specified"}
+                                </p>
+                                <p>
+                                    <strong>Qualifications:</strong> {job.qualifications || "Not specified"}
+                                </p>
+                                <p>
+                                    <strong>Required Skills:</strong> {job.requiredSkills || "Not specified"}
+                                </p>
+                                <p>
+                                    <strong>Job Type:</strong> {job.jobType || "Not specified"}
+                                </p>
+                                <p>
+                                    <strong>Experience:</strong> {job.experience || "Not specified"}
+                                </p>
+                                <p>
+                                    <strong>Salary:</strong> {job.salary ? `$${job.salary}` : "Not specified"}
+                                </p>
+                                <p>
+                                    <strong>Posted Date:</strong> {job.postedDate || "Not specified"}
+                                </p>
+                                <p>{job.description || "No description provided."}</p>
+                            </div>
                         </div>
-                    </div>
-                ))
+                    );
+                })
             )}
         </div>
     );
